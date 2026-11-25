@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}</style>
+<link rel="alternate" type="application/rss+xml" title="joy.tts 최신글" href="/rss.xml">
+<meta name="google-site-verification" content="eNWA4NSJzuKu57kBe-xcLb3pbO3nJWlouFC3LCzecbk">
+<meta name="naver-site-verification" content="098bcef836d56e0bd4a877311bfc0be69dc9daea">
+<title>joy.tts | 미국 틱톡샵, 한국 브랜드 관점으로</title>
+<meta name="description" content="미국 틱톡샵에서 바뀐 것을 가장 먼저, 숫자와 함께. 한국 브랜드가 바로 써먹을 수 있게 정리해요.">
+<link rel="canonical" href="https://joy-tts.com/">
+<meta property="og:title" content="joy.tts | 미국 틱톡샵, 한국 브랜드 관점으로">
+<meta property="og:description" content="미국 틱톡샵에서 바뀐 것을 가장 먼저, 숫자와 함께. 한국 브랜드가 바로 써먹을 수 있게 정리해요.">
+<meta property="og:url" content="https://joy-tts.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="joy.tts">
+<meta property="og:locale" content="ko_KR">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Archivo+Black&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 흰 바닥 한 장. 풍선 글자 JOYTTS가 떨어져 쌓이고, 글자를 누르면 O 안의 요정이 나와 GMV 캐치 게임이 열린다. */
+:root {
+  --paper: #ffffff;
+  --ink: #0b0b0c;
+  --balloon-red: #ee4630;
+  --balloon-sky: #63b5e8;
+  --balloon-lime: #8cd966;
+  --balloon-sun: #ffc93c;
+  --balloon-lilac: #b693f0;
+  --balloon-pink: #ff8fb8;
+  --veil: rgba(255, 255, 255, 0.94);
+  --font-balloon: "Fredoka", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-heavy: "Archivo Black", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+a { color: var(--ink); }
+a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--balloon-sky); outline-offset: 3px; }
+
+.top {
+  position: fixed; inset: 0 0 auto; z-index: 30;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  pointer-events: none;
+}
+.top > * { pointer-events: auto; }
+.wordmark { font-family: var(--font-heavy); font-size: 15px; letter-spacing: -0.02em; text-decoration: none; }
+.top nav { display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-end; }
+.top nav a { font-family: var(--font-body); font-weight: 900; font-size: 13px; text-decoration: none; letter-spacing: -0.02em; }
+.top nav a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.foot {
+  position: fixed; inset: auto 0 0; z-index: 30;
+  display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  font-size: 10px; font-weight: 700; line-height: 1.5; letter-spacing: -0.01em;
+  pointer-events: none;
+}
+.foot b { font-family: var(--font-heavy); font-weight: 400; }
+.hint { font-size: 12px; font-weight: 900; transition: opacity .4s; }
+
+#stage { position: fixed; inset: 0; z-index: 10; cursor: grab; }
+#stage:active { cursor: grabbing; }
+.letter {
+  position: absolute; left: 0; top: 0;
+  will-change: transform;
+  transition: opacity .5s;
+  pointer-events: none;
+}
+.letter svg { display: block; overflow: visible; }
+.hole-fairy {
+  position: absolute; left: 50%; top: 50%;
+  font-family: var(--emoji);
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  animation: peek 2.6s ease-in-out infinite;
+  transition: opacity .3s;
+}
+@keyframes peek {
+  0%, 100% { transform: translate(-50%, -46%) rotate(-8deg); }
+  50% { transform: translate(-50%, -58%) rotate(8deg); }
+}
+body.playing .letter { opacity: .18; }
+body.playing .hint { opacity: 0; }
+
+#game { position: fixed; inset: 0; z-index: 20; display: none; cursor: none; }
+body.playing #game { display: block; }
+
+.hud {
+  position: fixed; z-index: 25; left: 0; right: 0;
+  top: calc(56px + env(safe-area-inset-top, 0px));
+  display: none; justify-content: center; align-items: baseline; gap: 22px;
+  font-family: var(--font-heavy); letter-spacing: -0.04em;
+  pointer-events: none;
+}
+body.playing .hud { display: flex; }
+.hud .gmv { font-size: clamp(34px, 7vw, 64px); font-variant-numeric: tabular-nums; }
+.hud .gmv span { font-size: .42em; margin-right: .3em; letter-spacing: 0; }
+.hud .clock { font-size: clamp(22px, 3.6vw, 34px); font-variant-numeric: tabular-nums; }
+.hud .clock.low { color: var(--balloon-red); }
+
+.pop {
+  position: fixed; z-index: 26; pointer-events: none;
+  font-family: var(--font-heavy); font-size: 20px; letter-spacing: -0.03em;
+  transform: translate(-50%, -50%);
+  animation: rise .8s ease-out forwards;
+}
+@keyframes rise { to { transform: translate(-50%, -160%); opacity: 0; } }
+
+.end {
+  position: fixed; inset: 0; z-index: 40;
+  background: var(--veil);
+  display: flex; align-items: center; justify-content: center;
+  padding-block: 80px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+.end[hidden] { display: none; }
+.end { touch-action: auto; user-select: text; -webkit-user-select: text; }
+.end-in { width: min(640px, 100%); display: grid; gap: 28px; }
+.end h2 { margin: 0; font-family: var(--font-body); font-weight: 900; font-size: clamp(18px, 3vw, 24px); letter-spacing: -0.04em; }
+.end .score {
+  font-family: var(--font-heavy); font-size: clamp(64px, 16vw, 148px);
+  line-height: .9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums;
+}
+.end .verdict { margin: 0; font-weight: 900; font-size: clamp(20px, 3.4vw, 30px); letter-spacing: -0.045em; line-height: 1.3; text-wrap: balance; }
+.end .doors { display: grid; gap: 10px; margin-top: 4px; }
+.end .doors a, .end .doors button {
+  all: unset; cursor: pointer;
+  font-family: var(--font-body); font-weight: 900; font-size: clamp(17px, 2.6vw, 22px);
+  letter-spacing: -0.04em; line-height: 1.35;
+  display: flex; justify-content: space-between; gap: 12px;
+  border-bottom: 2px solid var(--ink); padding-bottom: 8px;
+}
+.end .doors a:hover, .end .doors button:hover { color: var(--balloon-red); border-color: var(--balloon-red); }
+.end .doors a:focus-visible, .end .doors button:focus-visible { outline: 3px solid var(--balloon-sky); outline-offset: 4px; }
+.end .again { display: flex; gap: 24px; flex-wrap: wrap; }
+.end .again button {
+  all: unset; cursor: pointer; font-weight: 900; font-size: 15px; letter-spacing: -0.03em;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.end .again button:focus-visible { outline: 3px solid var(--balloon-sky); outline-offset: 4px; }
+
+.close { position: absolute; top: calc(18px + env(safe-area-inset-top, 0px)); right: max(20px, env(safe-area-inset-right, 0px)); }
+.close button { all: unset; cursor: pointer; font-weight: 900; font-size: 15px; text-decoration: underline; text-underline-offset: 4px; }
+.close button:focus-visible { outline: 3px solid var(--balloon-sky); outline-offset: 4px; }
+
+.soon-word { width: min(560px, 100%); height: auto; overflow: visible; }
+.soon .verdict span { font-family: var(--emoji); }
+
+.end.consult { align-items: flex-start; overflow-y: auto; }
+.consult form { display: grid; gap: 22px; }
+.consult label { display: grid; gap: 6px; font-weight: 900; font-size: 15px; letter-spacing: -0.03em; }
+.consult input, .consult textarea {
+  font: 500 17px/1.5 var(--font-body); color: var(--ink);
+  background: transparent; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0;
+  padding: 6px 0; width: 100%; box-sizing: border-box;
+  user-select: text; -webkit-user-select: text;
+}
+.consult textarea { min-height: 120px; resize: vertical; }
+.consult input:focus, .consult textarea:focus { outline: none; border-color: var(--balloon-pink); }
+.consult .agree { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 13px; line-height: 1.6; }
+.consult .agree input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--ink); flex: none; }
+.consult .send { all: unset; cursor: pointer; justify-self: start; font-weight: 900; font-size: 20px; letter-spacing: -0.04em; border-bottom: 2px solid var(--ink); padding-bottom: 4px; }
+.consult .send:hover { color: var(--balloon-red); border-color: var(--balloon-red); }
+.consult .send:focus-visible { outline: 3px solid var(--balloon-sky); outline-offset: 4px; }
+.consult .status { margin: 0; font-weight: 900; font-size: 15px; min-height: 1.5em; }
+.hp { position: absolute; left: -9999px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hole-fairy { animation: none; }
+  .pop { animation-duration: .01s; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="puff" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB"></filter>
+    <filter id="puff-small" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="h"/>
+      <feDiffuseLighting in="h" surfaceScale="3.4" diffuseConstant="1.18" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="d" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="shade"/>
+      <feSpecularLighting in="h" surfaceScale="3.8" specularConstant="0.8" specularExponent="30" lighting-color="#fff" result="s"><feDistantLight azimuth="235" elevation="42"/></feSpecularLighting>
+      <feComposite in="s" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="shade" in2="gloss" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0" result="lit"/>
+      <feComposite in="lit" in2="SourceAlpha" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
+<header class="top">
+  <a class="wordmark" href="#" aria-label="joy.tts 첫 화면">joy.tts</a>
+  <nav aria-label="메뉴">
+    <a href="posts/">최신글</a>
+    <a href="#class">클래스</a>
+    <a href="#contact">상담</a>
+    <a href="https://www.instagram.com/joy.tts/" target="_blank" rel="noopener">인스타그램</a>
+  </nav>
+</header>
+
+<main id="stage" aria-label="JOYTTS 풍선 글자. 끌어서 던지고, 누르면 게임이 시작돼요."></main>
+<canvas id="game" aria-hidden="true"></canvas>
+
+<div class="hud" aria-live="polite">
+  <div class="gmv"><span>GMV</span><b id="gmv">$0</b></div>
+  <div class="clock" id="clock">10</div>
+</div>
+
+<section class="end" id="end" hidden aria-labelledby="end-title">
+  <div class="end-in">
+    <h2 id="end-title">요정이 이번 판에 떨어뜨린 GMV</h2>
+    <div class="score" id="final">$0</div>
+    <p class="verdict" id="verdict"></p>
+    <div class="doors">
+      <a href="posts/"><span>진짜 GMV 올리는 법, 최신글</span><span aria-hidden="true">→</span></a>
+      <a href="#class"><span>원데이 클래스</span><span aria-hidden="true">→</span></a>
+      <a href="#contact"><span>미국 틱톡샵 상담</span><span aria-hidden="true">→</span></a>
+    </div>
+    <div class="again">
+      <button type="button" id="retry">한 판 더</button>
+      <button type="button" id="home">첫 화면으로</button>
+    </div>
+  </div>
+</section>
+
+<section class="end soon" id="soon" hidden aria-labelledby="soon-title">
+  <div class="close"><button type="button" data-close>닫기</button></div>
+  <div class="end-in">
+    <h2 id="soon-title">원데이 클래스</h2>
+    <svg class="soon-word" viewBox="0 0 560 130" role="img" aria-label="coming soon!">
+      <text x="10" y="100" font-family="Fredoka, sans-serif" font-weight="700" font-size="96" fill="#ff8fb8" stroke="#ff8fb8" stroke-width="7" stroke-linejoin="round" filter="url(#puff-small)">coming soon!</text>
+    </svg>
+    <p class="verdict">요정이 준비 중이에요 <span>🧚</span></p>
+  </div>
+</section>
+
+<section class="end consult" id="consult" hidden aria-labelledby="consult-title">
+  <div class="close"><button type="button" data-close>닫기</button></div>
+  <div class="end-in">
+    <h2 id="consult-title">미국 틱톡샵 상담</h2>
+    <p class="verdict">남겨주시면 joy가 직접 연락드려요.</p>
+    <form name="consult" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="consult-form">
+      <input type="hidden" name="form-name" value="consult">
+      <p class="hp"><label>비워두세요 <input name="bot-field" id="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <label for="c-name">이름<input id="c-name" name="name" autocomplete="name" required></label>
+      <label for="c-phone">연락처<input id="c-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
+      <label for="c-email">이메일<input id="c-email" name="email" type="email" autocomplete="email" required></label>
+      <label for="c-msg">상담 내용<textarea id="c-msg" name="message" placeholder="브랜드, 카테고리, 궁금한 점을 적어주세요" required></textarea></label>
+      <label class="agree" for="c-agree"><input id="c-agree" name="agree" type="checkbox" value="동의" required><span>상담 회신을 위해 이름, 연락처, 이메일, 상담 내용을 수집하고 상담이 끝난 뒤 1년간 보관해요. 동의하지 않으면 상담 신청을 할 수 없어요. (필수)</span></label>
+      <button class="send" type="submit">보내기 →</button>
+      <p class="status" id="c-status" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="foot">
+  <div><b>joy.tts</b> 미국 틱톡샵<br>© 2026 joy.tts</div>
+  <div class="hint">글자를 톡 누르면 요정이 나와요</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+(() => {
+  const { Engine, Bodies, Body, Composite, Mouse, MouseConstraint, Events, Query } = Matter;
+  const stage = document.getElementById('stage');
+  const filter = document.getElementById('puff');
+  const css = getComputedStyle(document.documentElement);
+  const tok = n => css.getPropertyValue(n).trim();
+
+  const LETTERS = [
+    ['J', tok('--balloon-red')],
+    ['O', tok('--balloon-sky')],
+    ['Y', tok('--balloon-lime')],
+    ['T', tok('--balloon-sun')],
+    ['T', tok('--balloon-lilac')],
+    ['S', tok('--balloon-pink')],
+  ];
+
+  let W = innerWidth, H = innerHeight;
+  const FOOT = () => 72;
+  const engine = Engine.create();
+  engine.gravity.y = 1.15;
+  const world = engine.world;
+
+  // 바람 넣은 풍선 질감: 알파를 흐려 높이맵을 만들고, 확산광으로 가장자리를 눌러주고 정반사로 광택을 얹는다.
+  function buildFilter(S) {
+    const b = (S * 0.055).toFixed(1);
+    filter.innerHTML = `
+      <feGaussianBlur in="SourceAlpha" stdDeviation="${b}" result="h"/>
+      <feDiffuseLighting in="h" surfaceScale="${(S * 0.035).toFixed(1)}" diffuseConstant="1.18" lighting-color="#fff" result="d">
+        <feDistantLight azimuth="235" elevation="58"/>
+      </feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="d" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="shade"/>
+      <feSpecularLighting in="h" surfaceScale="${(S * 0.04).toFixed(1)}" specularConstant="0.8" specularExponent="30" lighting-color="#fff" result="s">
+        <feDistantLight azimuth="235" elevation="42"/>
+      </feSpecularLighting>
+      <feComposite in="s" in2="SourceAlpha" operator="in" result="gloss"/>
+      <feComposite in="shade" in2="gloss" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0" result="lit"/>
+      <feComposite in="lit" in2="SourceAlpha" operator="in"/>`;
+  }
+
+  const letters = [];
+  let walls = [];
+  let S = 0;
+
+  function makeWalls() {
+    if (walls.length) Composite.remove(world, walls);
+    const t = 400;
+    const floorY = H - FOOT();
+    walls = [
+      Bodies.rectangle(W / 2, floorY + t / 2, W * 3, t, { isStatic: true }),
+      Bodies.rectangle(-t / 2, H / 2 - H, t, H * 4, { isStatic: true }),
+      Bodies.rectangle(W + t / 2, H / 2 - H, t, H * 4, { isStatic: true }),
+    ];
+    Composite.add(world, walls);
+  }
+
+  function makeLetters() {
+    S = Math.min(W / 4.9, H / 2.7, 280);
+    buildFilter(S);
+    const ctx = document.createElement('canvas').getContext('2d');
+    ctx.font = `700 ${S}px Fredoka`;
+    const sw = S * 0.07;
+    const pad = S * 0.2;
+    const gap = S * 0.06;
+    const widths = LETTERS.map(([ch]) => { const m = ctx.measureText(ch); return m.actualBoundingBoxLeft + m.actualBoundingBoxRight + sw * 0.6; });
+    let cursor = (W - widths.reduce((a, b) => a + b + gap, -gap)) / 2;
+    LETTERS.forEach(([ch, color], i) => {
+      const m = ctx.measureText(ch);
+      const gw = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+      const asc = m.actualBoundingBoxAscent, desc = m.actualBoundingBoxDescent;
+      const gh = asc + desc;
+      const ew = gw + sw + pad * 2, eh = gh + sw + pad * 2;
+      const el = document.createElement('div');
+      el.className = 'letter';
+      el.innerHTML = `<svg width="${ew}" height="${eh}" viewBox="0 0 ${ew} ${eh}" style="filter: drop-shadow(0 ${S * 0.035}px ${S * 0.05}px rgba(20,20,30,.22))">
+        <text x="${pad + sw / 2 + m.actualBoundingBoxLeft}" y="${pad + sw / 2 + asc}" font-family="Fredoka, sans-serif" font-weight="700" font-size="${S}"
+          fill="${color}" stroke="${color}" stroke-width="${sw}" stroke-linejoin="round" filter="url(#puff)">${ch}</text></svg>`;
+      if (ch === 'O') {
+        const f = document.createElement('span');
+        f.className = 'hole-fairy';
+        f.textContent = '🧚';
+        f.style.fontSize = `${S * 0.2}px`;
+        el.appendChild(f);
+      }
+      stage.appendChild(el);
+      const bw = gw + sw * 0.6, bh = gh + sw * 0.6;
+      const x = Math.max(bw / 2, Math.min(W - bw / 2, cursor + bw / 2));
+      cursor += bw + gap;
+      const body = Bodies.rectangle(x, -bh - i * S * 0.35, bw, bh, {
+        chamfer: { radius: Math.min(bw, bh) * 0.28 },
+        restitution: 0.35, friction: 0.5, frictionAir: 0.014, density: 0.0018,
+        angle: (Math.random() - 0.5) * 0.16,
+      });
+      letters.push({ el, body, ew, eh, ch });
+    });
+    // 순서대로 하나씩 떨어지게 잠깐 고정했다가 놓는다
+    letters.forEach((l, i) => {
+      Body.setStatic(l.body, true);
+      Composite.add(world, l.body);
+      setTimeout(() => Body.setStatic(l.body, false), 250 + i * 160);
+    });
+  }
+
+  const mouse = Mouse.create(stage);
+  const drag = MouseConstraint.create(engine, { mouse, constraint: { stiffness: 0.18, damping: 0.08 } });
+  Composite.add(world, drag);
+  let down = null;
+  Events.on(drag, 'mousedown', () => {
+    const hit = Query.point(letters.map(l => l.body), mouse.position)[0];
+    down = { x: mouse.position.x, y: mouse.position.y, t: performance.now(), hit };
+  });
+  Events.on(drag, 'mouseup', () => {
+    if (!down) return;
+    const moved = Math.hypot(mouse.position.x - down.x, mouse.position.y - down.y);
+    if (down.hit && moved < 8 && performance.now() - down.t < 350 && !playing) startGame();
+    down = null;
+  });
+
+  function syncLetters() {
+    for (const l of letters) {
+      const p = l.body.position;
+      // 오뚝이처럼: 잡고 있지 않으면 천천히 바로 선다
+      if (drag.body !== l.body && !l.body.isStatic) {
+        const a = Math.atan2(Math.sin(l.body.angle), Math.cos(l.body.angle));
+        Body.setAngularVelocity(l.body, l.body.angularVelocity * 0.97 - a * 0.0035);
+      }
+      if (p.y > H + 400 || p.x < -400 || p.x > W + 400) {
+        Body.setPosition(l.body, { x: W / 2, y: -S });
+        Body.setVelocity(l.body, { x: 0, y: 0 });
+      }
+      l.el.style.transform = `translate(${p.x - l.ew / 2}px, ${p.y - l.eh / 2}px) rotate(${l.body.angle}rad)`;
+    }
+  }
+
+  // ---------- GMV 캐치 ----------
+  const cv = document.getElementById('game');
+  const g = cv.getContext('2d');
+  const gmvEl = document.getElementById('gmv');
+  const clockEl = document.getElementById('clock');
+  const endEl = document.getElementById('end');
+  const ITEMS = [
+    { e: '💄', v: 32, w: 3 },
+    { e: '🧴', v: 28, w: 3 },
+    { e: '🎬', v: 120, w: 1.3 },
+    { e: '❤️', v: 6, w: 4 },
+    { e: '🔁', v: 15, w: 2.5 },
+    { e: '💬', v: 10, w: 3 },
+  ];
+  const totalW = ITEMS.reduce((a, b) => a + b.w, 0);
+  const pick = () => { let r = Math.random() * totalW; for (const it of ITEMS) { if ((r -= it.w) <= 0) return it; } return ITEMS[0]; };
+  const ROUND = 10;
+
+  let playing = false, ending = false, t0 = 0, gmv = 0, nextDrop = 0;
+  let items = [], sparks = [];
+  const fairy = { x: 0, y: 0, fromX: 0, fromY: 0 };
+  const cart = { x: 0, tx: 0, bump: 0 };
+  const keys = {};
+
+  function fitCanvas() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+  const cartY = () => H - FOOT() - 46;
+  const cartSize = () => Math.max(58, Math.min(W * 0.1, 92));
+
+  function startGame() {
+    playing = true; ending = false;
+    endEl.hidden = true;
+    document.body.classList.add('playing');
+    drag.collisionFilter.mask = 0;
+    const o = letters.find(l => l.ch === 'O');
+    fairy.fromX = o ? o.body.position.x : W / 2;
+    fairy.fromY = o ? o.body.position.y : H / 2;
+    fairy.x = fairy.fromX; fairy.y = fairy.fromY;
+    if (o) o.el.querySelector('.hole-fairy').style.opacity = 0;
+    gmv = 0; items = []; sparks = [];
+    cart.x = cart.tx = W / 2;
+    t0 = performance.now(); nextDrop = 0.9;
+    gmvEl.textContent = fmt(0);
+    clockEl.textContent = ROUND; clockEl.classList.remove('low');
+  }
+
+  function finish() {
+    playing = false;
+    document.body.classList.remove('playing');
+    document.getElementById('final').textContent = fmt(gmv);
+    document.getElementById('verdict').textContent =
+      gmv < 250 ? '아직 샘플 뿌리는 단계예요. 크리에이터부터 모아봐요.'
+      : gmv < 600 ? '크리에이터가 붙기 시작했어요. 이제 영상이 터질 차례.'
+      : gmv < 1000 ? '이 정도면 GMV Max 켜볼 만해요.'
+      : '미국 틱톡샵 요정 인증. 이제 진짜 계정에서 해봐요.';
+    endEl.hidden = false;
+    document.getElementById('retry').focus();
+  }
+
+  function goHome() {
+    endEl.hidden = true;
+    drag.collisionFilter.mask = 0xFFFFFFFF;
+    const o = letters.find(l => l.ch === 'O');
+    if (o) o.el.querySelector('.hole-fairy').style.opacity = 1;
+  }
+
+  // ---------- 클래스·상담 시트 ----------
+  const sheets = { class: document.getElementById('soon'), contact: document.getElementById('consult') };
+  let opener = null;
+  function openSheet(name) {
+    opener = document.activeElement;
+    endEl.hidden = true;
+    Object.values(sheets).forEach(s => { s.hidden = true; });
+    sheets[name].hidden = false;
+    drag.collisionFilter.mask = 0;
+    (sheets[name].querySelector('input:not([type=hidden]):not(#bot-field)') || sheets[name].querySelector('[data-close]')).focus();
+  }
+  function closeSheets() {
+    Object.values(sheets).forEach(s => { s.hidden = true; });
+    goHome();
+    if (opener && opener.focus) opener.focus();
+  }
+  document.querySelectorAll('a[href="#class"], a[href="#contact"]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); openSheet(a.getAttribute('href').slice(1)); });
+  });
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
+  if (location.hash === '#class' || location.hash === '#contact') setTimeout(() => openSheet(location.hash.slice(1)), 0);
+  Object.values(sheets).forEach(s => s.addEventListener('click', e => { if (e.target === s) closeSheets(); }));
+
+  const form = document.getElementById('consult-form');
+  const status = document.getElementById('c-status');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    status.textContent = '보내는 중이에요…';
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+      if (!res.ok) throw new Error(res.status);
+      form.reset();
+      status.textContent = '잘 받았어요. joy가 곧 연락드릴게요 🧚';
+    } catch {
+      status.textContent = '전송이 안 됐어요. 잠시 뒤에 다시 보내주세요.';
+    }
+  });
+
+  document.getElementById('retry').addEventListener('click', startGame);
+  document.getElementById('home').addEventListener('click', goHome);
+  endEl.addEventListener('click', e => { if (e.target === endEl) goHome(); });
+
+  cv.addEventListener('pointermove', e => { cart.tx = e.clientX; });
+  cv.addEventListener('pointerdown', e => { cart.tx = e.clientX; });
+  addEventListener('keydown', e => {
+    keys[e.key] = true;
+    if (e.key === 'Escape' && playing) { playing = false; document.body.classList.remove('playing'); goHome(); }
+    if (e.key === 'Escape' && !endEl.hidden) goHome();
+    if (e.key === 'Escape' && Object.values(sheets).some(s => !s.hidden)) closeSheets();
+  });
+  addEventListener('keyup', e => { keys[e.key] = false; });
+
+  function drawEmoji(ch, x, y, size, alpha = 1, rot = 0) {
+    g.save();
+    g.globalAlpha = alpha;
+    g.translate(x, y); g.rotate(rot);
+    g.font = `${size}px ${tok('--emoji')}`;
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(ch, 0, 0);
+    g.restore();
+  }
+
+  function pop(text, x, y) {
+    const s = document.createElement('div');
+    s.className = 'pop'; s.textContent = text;
+    s.style.left = x + 'px'; s.style.top = y + 'px';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 850);
+  }
+
+  function stepGame(now, dt) {
+    const el = (now - t0) / 1000;
+    const left = Math.max(0, ROUND - el);
+    clockEl.textContent = Math.ceil(left);
+    clockEl.classList.toggle('low', left <= 5);
+
+    // 요정: 처음 0.8초는 O 구멍에서 위로 날아오르고, 그 뒤 위쪽을 이리저리 난다
+    const fly = Math.min(1, el / 0.8);
+    const ease = 1 - Math.pow(1 - fly, 3);
+    const tx = W / 2 + Math.sin(el * 0.95) * W * 0.36 + Math.sin(el * 2.6) * W * 0.05;
+    const ty = Math.min(H * 0.24, 150) + Math.sin(el * 3.1) * 14;
+    fairy.x = fairy.fromX + (tx - fairy.fromX) * ease;
+    fairy.y = fairy.fromY + (ty - fairy.fromY) * ease;
+    if (Math.random() < 0.7) sparks.push({ x: fairy.x + (Math.random() - 0.5) * 24, y: fairy.y + 14, life: 1, s: 10 + Math.random() * 10 });
+
+    // 떨어뜨리기
+    if (left > 0 && el > nextDrop) {
+      const it = pick();
+      items.push({ ...it, x: fairy.x, y: fairy.y + 20, vy: 90 + el * 7, vx: (Math.random() - 0.5) * 60, rot: 0, vr: (Math.random() - 0.5) * 3 });
+      nextDrop = el + Math.max(0.28, 0.55 - el * 0.025);
+    }
+
+    // 장바구니
+    const sp = W * 1.4 * dt;
+    if (keys.ArrowLeft) cart.tx -= sp;
+    if (keys.ArrowRight) cart.tx += sp;
+    const cs = cartSize();
+    cart.tx = Math.max(cs / 2, Math.min(W - cs / 2, cart.tx));
+    cart.x += (cart.tx - cart.x) * Math.min(1, dt * 18);
+    cart.bump = Math.max(0, cart.bump - dt * 4);
+    const cy = cartY();
+
+    for (const it of items) {
+      it.vy += 260 * dt;
+      it.x += it.vx * dt; it.y += it.vy * dt; it.rot += it.vr * dt;
+      it.vx *= 0.99;
+      if (!it.done && it.y > cy - cs * 0.45 && it.y < cy + cs * 0.15 && Math.abs(it.x - cart.x) < cs * 0.58) {
+        it.done = true;
+        gmv += it.v;
+        cart.bump = 1;
+        gmvEl.textContent = fmt(gmv);
+        pop('+' + fmt(it.v), cart.x, cy - cs * 0.7);
+      }
+    }
+    items = items.filter(it => !it.done && it.y < H + 60);
+
+    if (left <= 0 && !ending) { ending = true; setTimeout(finish, 900); }
+
+    // 그리기
+    g.clearRect(0, 0, W, H);
+    for (const s of sparks) { s.life -= dt * 1.6; s.y += 30 * dt; }
+    sparks = sparks.filter(s => s.life > 0).slice(-60);
+    for (const s of sparks) drawEmoji('✨', s.x, s.y, s.s * s.life + 4, s.life * 0.9);
+    for (const it of items) drawEmoji(it.e, it.x, it.y, 40, 1, it.rot);
+    drawEmoji('🧚', fairy.x, fairy.y, 64, 1, Math.sin(el * 6) * 0.12);
+    const k = 1 + cart.bump * 0.18;
+    drawEmoji('🛒', cart.x, cy - cart.bump * 6, cs * k);
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+    Engine.update(engine, dt * 1000);
+    syncLetters();
+    if (playing) stepGame(now, dt);
+    else if (ending) g.clearRect(0, 0, W, H);
+    requestAnimationFrame(loop);
+  }
+
+  addEventListener('resize', () => {
+    W = innerWidth; H = innerHeight;
+    makeWalls(); fitCanvas();
+  });
+
+  const ready = document.fonts ? document.fonts.load(`700 100px Fredoka`).catch(() => {}) : Promise.resolve();
+  Promise.race([ready, new Promise(r => setTimeout(r, 2500))]).then(() => {
+    makeWalls(); fitCanvas(); makeLetters();
+    requestAnimationFrame(loop);
+  });
+})();
+</script>
+</body>
+</html>
